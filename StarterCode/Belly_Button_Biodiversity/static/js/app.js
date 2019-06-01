@@ -3,18 +3,29 @@ function buildMetadata(sample) {
   // @TODO: Complete the following function that builds the metadata panel
 
   // Use `d3.json` to fetch the metadata for a sample
-    // Use d3 to select the panel with id of `#sample-metadata`
+  url = `/metadata/${sample}`;
 
-    // Use `.html("") to clear any existing metadata
+  d3.json(url).then(function(data) {
+    console.log(data);
+    // Use d3 to select the panel with id of `#sample-metadata`
+    var panel = d3.select("#sample-metadata")
+   // Use `.html("") to clear any existing metadata
+    panel.html("")
 
     // Use `Object.entries` to add each key and value pair to the panel
-    // Hint: Inside the loop, you will need to use d3 to append new
-    // tags for each key-value in the metadata.
+    console.log(Object.entries(data));
+
+    Object.entries(data).forEach(([key,value]) => {
+      console.log(key,value)
+      var paragraph = panel.append("p")
+      paragraph.text(`${key}: ${value}`)
+    });
+
+  })
 
     // BONUS: Build the Gauge Chart
     // buildGauge(data.WFREQ);
 }
-
 function buildCharts(sample) {
 
   // @TODO: Use `d3.json` to fetch the sample data for the plots
@@ -28,22 +39,17 @@ function buildCharts(sample) {
     // sorted_data.sort(function(a,b){
     //   return parseFloat(b.sample_values) - parseFloat(a.sample_values)
     // });
-
     // console.log(sorted_data)
 
     // Grab values from the response json object to build the plots
     //pull only first 10 values
-    var otu_ids = data.otu_ids.slice(0,10);
+    var otu_ids = data.otu_ids.slice(0,10).map((item)=>item);
     //test variable pull
     console.log(otu_ids);
-    var otu_labels = data.otu_labels.slice(0,10);
+    var otu_labels = data.otu_labels.slice(0,10).map((item)=>item);
     console.log(otu_labels);
-    var sample_values = data.sample_values.slice(0,10);
+    var sample_values = data.sample_values.slice(0,10).map((item)=>item);
     console.log(sample_values);
-
-    //create variable for length of otu_labels
-    otu_labels_lengths = otu_labels
-
 
     //Build a Pie Chart
     var trace1 = {
@@ -57,11 +63,10 @@ function buildCharts(sample) {
 
     //layout
     var pieLayout = {
-      // title: `Sample: ${sample}, Top 10 `
-      title: `${sample}`
+      title: `Sample: ${sample}, Top 10 `
     }
 
-    Plotly.plot("pie",pieData, pieLayout);
+    Plotly.newPlot("pie",pieData, pieLayout);
 
     // @TODO: Build a Bubble Chart using the sample data
     var trace2 = {
@@ -79,12 +84,13 @@ function buildCharts(sample) {
 
     var bubbleLayout = {
       title: ` Sample: ${sample} Biodiversity Bubble Chart`,
+      showlegend:false,
       xaxis: {
         title: "OTU ID"
       }
     }
 
-    Plotly.plot('bubble',bubbleData, bubbleLayout);
+    Plotly.newPlot('bubble',bubbleData, bubbleLayout);
 
   })
 };

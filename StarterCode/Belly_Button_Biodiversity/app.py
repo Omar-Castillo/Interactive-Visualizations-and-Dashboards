@@ -19,6 +19,7 @@ app = Flask(__name__)
 #################################################
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = "0"
 db = SQLAlchemy(app)
 
 # reflect an existing database into a new model
